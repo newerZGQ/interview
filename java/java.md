@@ -1,0 +1,99 @@
+- 面向对象
+  - 封装：对客观事物抽象
+  - 多态：覆写，重载
+  - 继承
+- object
+  - hashcode
+  - equal
+  - wait、notify、notifyall
+  - clone
+  - tostring
+  - getClass
+  - finalize
+- classloader
+  - 四层，自定义classloader、appclassloader（加载应用内）、extclassloader（加载jre ext包内的class）、bootsclassloader（加载rt包）
+  - 双亲委派模式，每个classloader都有一个parent引用，当需要加载一个类的时候，会先让parent去加载，parent找不到，才会由自己执行，先调用findClass找到class文件，再defineclass就行了，双亲委派模式在java应用中表现的很明显，在launcher类中，初始化这个类的时候会创建extclassloader，再以extclassloader为parent创建appclassloader，而bootclassloader比较特殊，其实extclassloader的parent是空的，所以在classloader的loadclass中，如果parent为null，会直接找bootclassloader
+  - 要重写findclass，不要loadclass，重写loadclass会打破双亲委派模式
+- hashmap
+  - hash算法，两次hash，第二次是保持高16位不变，低16位改为高16与低16的异或运算结果，这是为了避免hash算法的缺陷导致的hash冲突过多，插入时对数组长度的取模在jdk1.8的时候也改为了位运算，即对长度-1做与运算
+  - 链表转红黑树，在长度8的时候转
+  - entryset只是一个壳子，并没有真的将所有节点保存在一个set中，他只是提供一个按照数组从前往后遍历这个map的能力
+  - resize时总是乘2的原因，是避免全部rehash并重新put的操作，因为乘2的操作，可以将原来的节点分成两部分，一部分最终的索引不变，那么resize时就不用变动，直接copy到前半部分，另一部分节点移动到后半部分
+  - 负载因子，0.75
+  - threshold，每次热size的时候都会重新计算threshold，当当前size大于等于threshold时会重新resize，threshold=cap*loadfactor
+- hashtable
+  - hashtable可以看做是hashmap的前身，它的出现要比hashmap早
+  - hashtable也是一个散列表，和hashmap区别在于hashtable的所有方法都加了锁，所以是线程安全的，另外table和map的hash方式不一样，map的容量都是2的幂次，计算索引时使用的是位运算，也有二次hash的操作，这些保证了hashmap在resize时性能非常好，而table的容量是乘2+1，所以每次都需要rehash，就是把数组里的所有的第一个元素rehash并重新计算索引位置
+- HashSet
+  - 内部实现是一个hashmap，所有的value都是同一个对象
+- LinkedHashSet
+  - 内部实现是一个LinkedHashMap
+- LinkedList
+  - 双向链表
+- ArrayList
+  - 默认容量为10，10也是最小值
+  - 扩容1.5倍
+- String
+  - 不可变类+常量池=空间换时间
+- final
+  - 类，方法，变量
+- finally
+  - return 前
+  - 必执行
+- finalize
+  - GC 执行
+  - 复活的最后一次机会
+  - 两次打标
+- 内部类
+  - 静态 正常使用
+  - 非静态 实例相当于外部对象的变量
+  - 内部类编译后是单独的 class 文件
+- 编码
+  - ASCII 编码：用来表示英文，它使用 1 个字节表示，其中第一位规定为 0，其他 7 位存储数据，一共可以表示 128 个字符。
+  - 拓展 ASCII 编码：用于表示更多的欧洲文字，用 8 个位存储数据，一共可以表示 256 个字符
+  - GBK/GB2312/GB18030：表示汉字。GBK/GB2312 表示简体中文，GB18030 表示繁体中文。
+  - Unicode 编码：包含世界上所有的字符，是一个字符集。
+  - UTF-8：是 Unicode 字符的实现方式之一，它使用 1-4 个字符表示一个符号，根据不同的符号而变化字节长度。
+- 序列化
+  - Serializable
+  - Parcelable
+    - writeToParcel
+- fastjson原理
+  - 与gson对比
+- 多线程
+  - countdownlatch：一个线程等其他线程完成再继续
+  - CyclicBarrier：多个线程跑完一起继续
+- 异常
+- GC
+  - 看看 GC log
+  - 是不是 GC 的所有过程都会 stop the world，不是的，比如 cms 垃圾回收器，只会在标记的过程中进入安全点，回收过程是与用户线程同步进行的
+  - 什么时候触发 GC
+    - 新生代的 eden 区满了
+    - 老年代空间不够
+      - 新生代的 S 区高年龄对象进入老年代时剩余内存不够
+      - 新生代的大对象直接进入老年代的时候
+      - 方法区空间不够
+  - 永久代和方法区的关系
+    - 方法区 jvm 里的一个概念，可以用老年代来实现方法区
+- 引用类型
+  - 强引用，只要有强引用存在就不会被回收
+  - 软引用，只在将要发生内存溢出时进行回收操作，如果这次回收后内存仍然不够，才会报溢出异常
+  - 弱引用，如果一个对象只有弱引用，那么在下次垃圾回收时会被回收
+  - 虚引用，最弱的一种，甚至不能通过虚引用获得对象实例，为一个对象设置一个虚引用的唯一目的就是在他被回收的时候收到一个通知
+- ArrayMap
+  - 两个数组
+- 泛型
+  - 只在编译阶段有效
+  - 无论何时，如果你能做到，你就该尽量使用泛型方法。也就是说，如果使用泛型方法将整个类泛型化，那么就应该使用泛型方法。另外对于一个 static 的方法而已，无法访问泛型类型的参数。所以如果 static 方法要使用泛型能力，就必须使其成为泛型方法。
+  - 泛型做入参时如`void test(GenericHolder holder)`，GenericHolder<Fruit>和 GenericHolder<Apple>是两种不同的类型，所以要有通配符?。? extends T 表示上界，? super T 表示下界
+  - 有界的类型参数`class Test<T extends Fruit>`
+  - 子类可以指定父类的泛型类型，也可以不指定，不指定的话要按照父类泛型的标志重新声明
+  - 类型擦除：Java 中的泛型基本上都是在编译器这个层次来实现的。在生成的 Java 字节代码中是不包含泛型中的类型信息的。使用泛型的时候加上的类型参数，会被编译器在编译的时候去掉。这个过程就称为类型擦除。如在代码中定义的 List<Object>和 List<String>等类型，在编译之后都会变成 List。JVM 看到的只是 List。
+    - 泛型类并没有独有的 class，比如并不存在 List<String>.class 或是 List<Integer>.class，而只有 List.class。
+    - 静态变量是被泛型类的所有实例所共享
+    - 泛型的类型参数不能用在 Java 异常处理的 catch 语句中。因为异常处理是由 JVM 在运行时刻来进行的。
+    - 编译器承担了全部的类型检查工作
+- 反射
+  - field
+  - method
+  - annotation
