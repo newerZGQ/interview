@@ -1,0 +1,19 @@
+- hashmap
+  - hash算法，两次hash，第二次是保持高16位不变，低16位改为高16与低16的异或运算结果，这是为了避免hash算法的缺陷导致的hash冲突过多，插入时对数组长度的取模在jdk1.8的时候也改为了位运算，即对长度-1做与运算
+  - 链表转红黑树，在长度8的时候转
+  - entryset只是一个壳子，并没有真的将所有节点保存在一个set中，他只是提供一个按照数组从前往后遍历这个map的能力
+  - resize时总是乘2的原因，是避免全部rehash并重新put的操作，因为乘2的操作，可以将原来的节点分成两部分，一部分最终的索引不变，那么resize时就不用变动，直接copy到前半部分，另一部分节点移动到后半部分
+  - 负载因子，0.75
+  - threshold，每次热size的时候都会重新计算threshold，当当前size大于等于threshold时会重新resize，threshold=cap*loadfactor
+- hashtable
+  - hashtable可以看做是hashmap的前身，它的出现要比hashmap早
+  - hashtable也是一个散列表，和hashmap区别在于hashtable的所有方法都加了锁，所以是线程安全的，另外table和map的hash方式不一样，map的容量都是2的幂次，计算索引时使用的是位运算，也有二次hash的操作，这些保证了hashmap在resize时性能非常好，而table的容量是乘2+1，所以每次都需要rehash，就是把数组里的所有的第一个元素rehash并重新计算索引位置
+- HashSet
+  - 内部实现是一个hashmap，所有的value都是同一个对象
+- LinkedHashSet
+  - 内部实现是一个LinkedHashMap
+- LinkedList
+  - 双向链表
+- ArrayList
+  - 默认容量为10，10也是最小值
+  - 扩容1.5倍

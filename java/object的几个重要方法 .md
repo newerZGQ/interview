@@ -1,0 +1,8 @@
+- object
+  - hashcode
+  - equal
+  - wait、notify、notifyall
+  - clone
+  - tostring
+  - getClass
+  - finalize

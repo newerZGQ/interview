@@ -1,0 +1,21 @@
+- service
+  - 运行在主线程
+  - service中可以弹toast
+  - service注册在哪里，servicemanager
+    - 生命周期由谁控制
+  - 生命周期
+    - onCreate只在启动的时候回调
+    - onStartCommond在每次调用startService时回调
+    - onBind只在第一次绑定时回调
+    - onUnBind只在所有client解绑时回调
+    - onDestroy只在stop掉所有client同时unbind掉所有client时回调
+  - 本地Service remote service区别
+    - 运行进程不同
+    - 有没有ipc
+  - 前台service
+    - 
+  - acitvitymanagerservice和activitymanager
+  - 一个进程几个binder线程
+
+- intentService
+  - 执行完任务销毁

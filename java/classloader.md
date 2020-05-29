@@ -1,0 +1,4 @@
+- classloader
+  - 四层，自定义classloader、appclassloader（加载应用内）、extclassloader（加载jre ext包内的class）、bootsclassloader（加载rt包）
+  - 双亲委派模式，每个classloader都有一个parent引用，当需要加载一个类的时候，会先让parent去加载，parent找不到，才会由自己执行，先调用findClass找到class文件，再defineclass就行了，双亲委派模式在java应用中表现的很明显，在launcher类中，初始化这个类的时候会创建extclassloader，再以extclassloader为parent创建appclassloader，而bootclassloader比较特殊，其实extclassloader的parent是空的，所以在classloader的loadclass中，如果parent为null，会直接找bootclassloader
+  - 要重写findclass，不要loadclass，重写loadclass会打破双亲委派模式

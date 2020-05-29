@@ -1,0 +1,3 @@
+- SharedPreference
+  - 原理：数据是用xml格式存储在data cache文件夹中
+  - 线程安全，在get和editor.apply等方法中均有synchronized修饰，首先在getsp的时候通过一个map缓存了所有已使用过的sp，保证拿的都是同一个sp对象，另外在每个get方法中，都会做一个同步操作，就是sp的实现类sharedpreferencesimpl里，有一个boolean类型的标志位用于指示当前是否在做load文件的异步操作，如果在load xml文件则阻塞等待load完成，这样拿到的都是最新的数据，另外这个类会监听xml文件的版本和大小变化，如果有变化也会更新缓存。至于写操作，editor负责写操作，editor的每次操作不会直接写入文件，而是先记录在缓存中，在经过commit或者apply时才会做writetofile操作。apply是异步操作。commit同步，在主线程中。writetofile也是加了锁的。
