@@ -1,6 +1,26 @@
 - view的绘制过程
-  - 三大过程都是在chreographer回调到viewrootimpl之后进行的。有viewrootimpl统筹，从根view decorview遍历
+  - 三大过程都是在chreographer回调到viewrootimpl之后进行的。有viewrootimpl统筹，从根view decorview遍历。在viewrootimpl执行tranversal时，会去拿window的大小，对于一个activity来说，window的大小就是屏幕的大小，然后设置的layoutparams的模式是matchparent或者未指定时，measurespac的mode都是exactly，当layoutparams模式是wrap_content时，measurespac的mode都是at_most，就是硕都会填满window
   - onMeasure：onMeasure
+    - 父view与子lp比较确定spec的过程，
+      - 父是exactly时
+        - 子是wrapcontent，则是atmost
+        - 子是具体值，则是exactly
+        - 子是matchparent，是exactly
+      - 父是atmost时
+        - 子wrapcontent，则是atmost
+        - 子是具体值，则是exactly
+        - 子是matchparent，则是atmost
+      - 父是unspecified
+        - 子是wrapcontent，则是unspecified
+        - 子是具体值，则是exactly
+        - 子是matchparent，则是unspecified
+    - 对于简单view，因为没有子view，onMeasure时不需要与子view的lp比较来确定子view的measurespec，只需要注意自身wrap_content时的默认值即可，这是因为，在onMeasure的默认实现中，根据父view传递过来的spec计算子view宽高时，对于spec的atmost和EXACTLY两种情况，返回的都是spec确定的值（另，注意UNSPECIFIED返回的是计算的最小值），这就导致wrapcontent和matchparnt结果一致，也就是wrapcontent未生效，所以要针对wrapcontent单独设置默认值，比如textview会根据字数确定。
+    - 对于viewgroup，则会在每次onMeasure时拿自身spec与每个子view的lp比较，确定子view的spec（参照上面），而每个子view则会在自己的onMeasure中根据spec以及自己的xml中的属性来计算，要么计算出真正自己的宽高，要么跟随上面的规则继续下去。
+  - onLayout
+    - onMeasure之后确定了测量的宽高，然后在layout方法中，view会确定自己在父view中的位置，然后再在onlayout中确定自己的子view的位置，也就是会在确定子view的ltrb四个参数之后，调用子view的layout函数，以此规律向下走。通常情况下，各类的viewgroup会根据自己要实现的layout逻辑，在onlayout中改变子view的ltrb，同时保证r-l=measuredWidth,b-t=measuredHeight，这样在绘制结束后getMeasuredWidth就会等于getWidth，但是，如果我们在onlayout时，不保证r-l=measuredWidth,b-t=measuredHeight，那就会改变view的大小，getMeasuredWidth就不会等于getWidth。所以说宽高是在onlayout时确定的。
+  - onDraw
+    - onLayout中确定最终的宽高后，在onDraw中会根据ltrb进行canvas裁剪，这样保证在draw过程中，每个view的坐标都是自己的左上角是0，0
+    - draw的过程是drawbackground，drawcontent，dispatchDraw，drawforeground（就是滚动bar）
 
 - ViewStub
   - viewstub 懒加载
