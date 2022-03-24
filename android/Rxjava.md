@@ -1,0 +1,24 @@
+reactive streams规范的四个角色
+Publisher
+Subscriber
+Subscription
+Processor
+
+rxjava历史原因遗留的两个角色
+Observable
+Observer
+
+rxjava3
+Flowable支持背压
+Observable不支持背压
+
+调用Dispose.dispose之后，流不会再导向该subscriber
+
+每次subscribe一个新的订阅者，都会走一次发布者的subscribe方法
+
+Observable调用subscribe之后，先调用Observer的onSubscribe，再调用ObservableOnSubscribe（也就是source）的subscribe，这就走到了我们业务逻辑里
+
+背压
+
+自己实现
+

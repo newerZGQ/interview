@@ -1,2 +1,3 @@
 - ApplicationThread和ActivityThread
   - 首先ActivityThread是应用进程启动的时候加载的类，就像一般的java应用一样，这个类里有一个main方法，主线程就从这个main方法启动
+  - ApplicationThread其实就是一个binder，用于binder方式的跨进程交互
